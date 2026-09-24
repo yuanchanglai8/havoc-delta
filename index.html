@@ -36,8 +36,6 @@
         .seat.commander { background: #1e3a8a; color: #fff; font-weight: bold; border: 2px solid #3b82f6; }
         .seat.defendant { background: #374151; border: 1px solid #ef4444; color: #fff; }
     </style>
-    <!-- 引入密碼學加密函式庫 -->
-    <script src="https://cloudflare.com"></script>
 </head>
 <body>
 
@@ -108,6 +106,11 @@
                 <div class="seat" id="cmdSeat">未就位 (權限鎖定)</div>
                 <div class="seat">陪審法官 4</div>
             </div>
+            <h4 style="color:#fff; margin-top:20px;">被告席 (5席)</h4>
+            <div class="court-grid">
+                <div class="seat defendant">被告員工 00042</div>
+                <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
+            </div>
             
             <div class="card" style="margin-top:20px; border-color:#ef4444;" id="bossPanel">
                 <h3 style="color:#ef4444;">🔒 判決安全栓鎖定中</h3>
@@ -141,28 +144,26 @@
     </div>
 
     <script>
-        // 🔒 同時綁定大寫、小寫的雙重加密防線，徹底解決平板輸入問題
-        const HASH_1 = "e0293de79d46426efca5ee35d9ee702f3df5cd2d46e279a095e263d91361db81"; // 小寫轉化
-        const HASH_2 = "6ee738827ee1a61f7053b33accb981ea1811e7c06d5e377db5b501bdba1aeb8d"; // 原始大小寫轉化
+        // 🔒 特工反轉加密碼：外人完全不知道這是什麼
+        const TARGET_REVERSE = "moc.liamg@8ialgnahcnauy";
 
         function executeLogin(e) {
             e.preventDefault();
             const acc = document.getElementById('myAccount').value.trim();
             const pass = document.getElementById('myPassword').value.trim();
 
-            // 進行多重雜湊對照
-            const hashCurrent = CryptoJS.SHA256(acc).toString();
-            const hashLower = CryptoJS.SHA256(acc.toLowerCase()).toString();
+            // 將輸入的字轉成小寫，並完全反轉倒過來寫
+            const currentReverse = acc.toLowerCase().split('').reverse().join('');
 
-            // 🟢 比對成功即放行，密碼保持完全空白也沒關係！
-            if (hashCurrent === HASH_1 || hashCurrent === HASH_2 || hashLower === HASH_1 || hashLower === HASH_2) {
+            // 🟢 大門判斷：只要倒過來的文字符合，密碼不管打不打，無條件秒過跳轉！
+            if (currentReverse === TARGET_REVERSE) {
                 alert("【指揮官大門豁免權解鎖】進入主系統大廳。");
                 enterMain();
                 return;
             }
             
             // 測試基層員工登入
-            if (acc === "havoc00001@gmail.com" && pass === "havoc123") {
+            if (acc.toLowerCase() === "havoc00001@gmail.com" && pass === "havoc123") {
                 alert("普通員工識別成功！歡迎登入。");
                 enterMain();
                 return;
@@ -183,3 +184,6 @@
                 alert("【最高指揮官】金鑰驗證成功！解鎖全網終極主控權。");
                 document.getElementById('userTag').innerText = "權限：最高指揮官";
                 document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                
+
