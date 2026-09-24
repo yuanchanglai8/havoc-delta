@@ -36,7 +36,7 @@
         .seat.commander { background: #1e3a8a; color: #fff; font-weight: bold; border: 2px solid #3b82f6; }
         .seat.defendant { background: #374151; border: 1px solid #ef4444; color: #fff; }
     </style>
-    <!-- 引入高階密碼學雜湊加密庫 -->
+    <!-- 引入密碼學加密函式庫 -->
     <script src="https://cloudflare.com"></script>
 </head>
 <body>
@@ -58,7 +58,7 @@
                     </div>
                     <div class="input-group">
                         <label>登入密碼 (一般員工必填)</label>
-                        <input type="password" id="myPassword" placeholder="特權金鑰豁免者此處可留空">
+                        <input type="password" id="myPassword" placeholder="最高指揮官此處可留空">
                     </div>
                     <button class="btn-submit" type="submit">確認驗證進入大廳</button>
                 </form>
@@ -108,11 +108,6 @@
                 <div class="seat" id="cmdSeat">未就位 (權限鎖定)</div>
                 <div class="seat">陪審法官 4</div>
             </div>
-            <h4 style="color:#fff; margin-top:20px;">被告席 (5席)</h4>
-            <div class="court-grid">
-                <div class="seat defendant">被告員工 00042</div>
-                <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
-            </div>
             
             <div class="card" style="margin-top:20px; border-color:#ef4444;" id="bossPanel">
                 <h3 style="color:#ef4444;">🔒 判決安全栓鎖定中</h3>
@@ -146,20 +141,22 @@
     </div>
 
     <script>
-        // 🔒 指揮官 Email 經密碼學 SHA-256 加密後的終極亂碼（絕不可能被還原或偷看）
-        const SECRET_GATE_KEY = "6ee738827ee1a61f7053b33accb981ea1811e7c06d5e377db5b501bdba1aeb8d";
+        // 🔒 同時綁定大寫、小寫的雙重加密防線，徹底解決平板輸入問題
+        const HASH_1 = "e0293de79d46426efca5ee35d9ee702f3df5cd2d46e279a095e263d91361db81"; // 小寫轉化
+        const HASH_2 = "6ee738827ee1a61f7053b33accb981ea1811e7c06d5e377db5b501bdba1aeb8d"; // 原始大小寫轉化
 
         function executeLogin(e) {
             e.preventDefault();
-            const acc = document.getElementById('myAccount').value.trim().toLowerCase();
+            const acc = document.getElementById('myAccount').value.trim();
             const pass = document.getElementById('myPassword').value.trim();
 
-            // 瞬間將輸入的帳號轉換為密碼學加密亂碼
-            const checkHash = CryptoJS.SHA256(acc).toString();
+            // 進行多重雜湊對照
+            const hashCurrent = CryptoJS.SHA256(acc).toString();
+            const hashLower = CryptoJS.SHA256(acc.toLowerCase()).toString();
 
-            // 🟢 大門比對：只要加密亂碼符合，您的密碼欄留空，直接無條件秒進大廳！
-            if (checkHash === SECRET_GATE_KEY) {
-                alert("【指揮官專屬大門豁免權】加密識別成功！接入大廳。");
+            // 🟢 比對成功即放行，密碼保持完全空白也沒關係！
+            if (hashCurrent === HASH_1 || hashCurrent === HASH_2 || hashLower === HASH_1 || hashLower === HASH_2) {
+                alert("【指揮官大門豁免權解鎖】進入主系統大廳。");
                 enterMain();
                 return;
             }
@@ -171,7 +168,7 @@
                 return;
             }
 
-            alert("錯誤：大門口身分驗證失敗！");
+            alert("錯誤：大門口身分驗證不匹配！");
         }
 
         function enterMain() {
@@ -185,4 +182,4 @@
             if (key === "107095") {
                 alert("【最高指揮官】金鑰驗證成功！解鎖全網終極主控權。");
                 document.getElementById('userTag').innerText = "權限：最高指揮官";
-
+                document.getElementById('lockScreen').classList.add('hidden');
