@@ -5,35 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HAAVK GROUP 內網核心系統</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", "Microsoft JhengHei", sans-serif; }
-        body { background-color: #0d0f12; color: #d1d5db; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #0d0f12; color: #d1d5db; min-height: 100vh; }
         .hidden { display: none !important; }
-        
-        /* ================= 登入介面樣式 ================= */
-        #loginPage { display: flex; height: 100vh; overflow: hidden; }
-        .left-panel { flex: 1.2; background: linear-gradient(135deg, #15181c 0%, #090a0c 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 2px solid #22252a; }
-        .logo-icon { width: 100px; height: 100px; background-color: #1e3a8a; border: 4px solid #3b82f6; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
-        .logo-text { transform: rotate(-45deg); font-weight: 900; color: #fff; font-size: 20px; }
-        .company-name { margin-top: 25px; font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 4px; }
-        .right-panel { flex: 1; background-color: #111317; padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
-        .rules-box { background-color: #16191f; border-left: 4px solid #3b82f6; padding: 15px; }
-        .rule-item { font-size: 13px; color: #9ca3af; margin-bottom: 6px; list-style: none; }
-        .rule-item::before { content: "• "; color: #3b82f6; }
-        .form-box { background-color: #16191f; padding: 25px; border: 1px solid #22252a; }
+        /* 登入介面 */
+        #loginPage { display: flex; height: 100vh; }
+        .left-panel { flex: 1.2; background: #15181c; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 2px solid #22252a; }
+        .logo-box { width: 80px; height: 80px; background: #1e3a8a; border: 3px solid #3b82f6; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; }
+        .logo-text { transform: rotate(-45deg); font-weight: bold; color: #fff; }
+        .right-panel { flex: 1; background: #111317; padding: 30px; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+        .form-box { background: #16191f; padding: 20px; border: 1px solid #22252a; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 5px; }
-        .input-group input, .input-group select { width: 100%; padding: 10px; background-color: #0d0f12; border: 1px solid #2b303b; color: #fff; }
-        .btn-submit { width: 100%; padding: 12px; background-color: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; }
-        .switch-mode { text-align: center; margin-top: 15px; font-size: 12px; color: #9ca3af; cursor: pointer; text-decoration: underline; }
+        .input-group input { width: 100%; padding: 10px; background: #0d0f12; border: 1px solid #2b303b; color: #fff; }
+        .btn-submit { width: 100%; padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; }
+        /* 內網主介面 */
+        nav { background: #111317; border-bottom: 2px solid #22252a; padding: 15px; display: flex; justify-content: space-between; }
+        .nav-links span { color: #9ca3af; margin-right: 15px; cursor: pointer; font-weight: bold; }
+        .nav-links span.active { color: #3b82f6; }
+        .tab-content { padding: 30px; }
+        .card { background: #16191f; border: 1px solid #22252a; padding: 20px; margin-bottom: 15px; }
+        /* 法庭席位 */
+        .court-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
+        .seat { background: #1f2937; padding: 15px 5px; text-align: center; font-size: 11px; color: #9ca3af; border-radius: 4px; }
+        .seat.judge { background: #7f1d1d; color: #fff; font-weight: bold; }
+        .seat.defendant { background: #374151; border: 1px solid #ef4444; color: #fff; }
+    </style>
+</head>
+<body>
 
-        /* ================= 主系統導覽列 ================= */
-        nav { background-color: #111317; border-bottom: 2px solid #22252a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-item { color: #9ca3af; cursor: pointer; text-decoration: none; font-size: 15px; font-weight: bold; padding-bottom: 5px; }
-        .nav-item.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
+    <!-- ================= 1. 登入介面 ================= -->
+    <div id="loginPage">
+        <div class="left-panel">
+            <div class="logo-box"><div class="logo-text">HAAVK</div></div>
+            <h2 style="margin-top:20px; color:#fff; letter-spacing:2px;">HAAVK COMPANY</h2>
+            <p style="color:#3b82f6; font-size:12px; margin-top:10px;">• 安全防線確認完畢，等待驗證...</p>
+        </div>
+        <div class="right-panel">
+            <div class="form-box">
+                <h3 style="color:#fff; margin-bottom:15px;">安全身分驗證</h3>
+                <form onsubmit="executeLogin(event)">
+                    <div class="input-group">
+                        <label>電子郵件 / 通行金鑰</label>
+                        <input type="text" id="myAccount" required placeholder="請輸入 Email">
+                    </div>
+                    <div class="input-group">
+                        <label>存取密碼 (一般員工填寫)</label>
+                        <input type="password" id="myPassword" placeholder="指揮官請留空">
+                    </div>
+                    <button class="btn-submit" type="submit">確認驗證進入</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        /* ================= 區域一：輪播首頁 ================= */
-        #home { padding: 40px 10%; position: relative; }
+    <!-- ================= 2. 主系統內網 (預設隱藏) ================= -->
+    <div id="mainSystem" class="hidden">
+        <nav>
+            <div style="font-weight:bold; color:#fff;">HAAVK 核心系統大廳</div>
+            <div class="nav-links">
+                <span onclick="switchTab('home')" id="btn-home" class="active">首頁輪播</span>
+                <span onclick="switchTab('prices')">物品物價</span>
+                <span onclick="switchTab('court')">⚖️ 軍事法庭</span>
+            </div>
+            <div id="userTag" style="color:#3b82f6; font-weight:bold; font-size:13px;"></div>
+        </nav>
+
+        <!-- 首頁分頁 -->
+        <div id="home" class="tab-content">
+            <div class="card">
+                <h1 style="color:#fff; font-size:28px;">力量，服務於人</h1>
+                <p style="color:#9ca3af; margin-top:10px;">守護大家，為效率發展保駕護航。—— 【安全防衛部 · 威龍】</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div class="card" style="flex:1;"><h4>克萊爾</h4><p style="font-size:11px; color:#9ca3af;">絕對執行</p></div>
+                <div class="card" style="flex:1;"><h4>莉娜</h4><p style="font-size:11px; color:#9ca3af;">尖端醫護</p></div>
+            </div>
+        </div>
+
+        <!-- 物價分頁 -->
+        <div id="prices" class="tab-content hidden">
+            <div class="card"><h3>HVK-2 防彈護甲</h3><p style="color:#eab308; font-weight:bold;">100,000 哈夫幣</p></div>
+            <div class="card"><h3>圖靈磚</h3><p style="color:#eab308; font-weight:bold;">1,000,000 哈夫幣</p></div>
+        </div>
+
+        <!-- 法庭分頁 -->
+        <div id="court" class="tab-content hidden">
+            <h2 style="color:#ef4444; margin-bottom:10px;">最高軍事法庭 (27席位)</h2>
+            <h4 style="color:#fff;">法官席 (5席)</h4>
+            <div class="court-grid">
+                <div class="seat">陪審法官 1</div>
+                <div class="seat">陪審法官 2</div>
+                <div class="seat judge">大法官 (主審)</div>
+                <div class="seat judge" style="background:#1e3a8a;">最高指揮官 (您)</div>
+                <div class="seat">陪審法官 4</div>
+            </div>
+            <h4 style="color:#fff; margin-top:20px;">被告席 (5席)</h4>
+            <div class="court-grid">
+                <div class="seat defendant">被告員工 00042</div>
+                <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
+            </div>
+            <div class="card" style="margin-top:20px;" id="bossPanel">
+                <h3 style="color:#fff;">⚖️ 大法官判決審查 (安全栓機制)</h3>
+                <p style="font-size:13px; color:#9ca3af; margin:10px 0;">目前擬定判決：【將被告員工 00042 強制除名】</p>
+                <button class="btn-submit" style="background:#10b981; border-color:#10b981; width:auto; margin-right:10px;" onclick="alert('判決已核准！哈夫克全網公告發布，懲處生效。')">🔴 核准並發布</button>
+                <button class="btn-submit" style="background:#b91c1c; border-color:#ef4444; width:auto;" onclick="alert('判決已被最高指揮官一票駁回！')">❌ 一票駁回</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function executeLogin(e) {
+            e.preventDefault();
+            const acc = document.getElementById('myAccount').value.trim();
+            const pass = document.getElementById('myPassword').value.trim();
+
+            // 1. 最高指揮官登入邏輯 (Email免密 或 密碼107095)
+            if (acc === "yuanchanglai8@gmail.com" || pass === "107095") {
+                alert("【最高指揮官】身份識別成功！歡迎接入哈夫克系統大廳。");
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainSystem').classList.remove('hidden');
+                document.getElementById('userTag').innerText = "權限：最高指揮官";
+                return;
+            }
+
+            // 2. 權限人登入
+            if (pass === "123450") {
+                alert("【高階權限人】識別成功！進入系統。");
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainSystem').classList.remove('hidden');
+                document.getElementById('userTag').innerText = "權限：管理員";
+                document.getElementById('bossPanel').innerHTML = "<h4 style='color:#ef4444;'>🔒 判決安全栓鎖定中，等待最高指揮官簽准...</h4>";
+                return;
+            }
+
+            alert("驗證失敗：該帳號尚未獲准，或通行金鑰錯誤。");
+        }
+
+        function switchTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(c => c.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
         .carousel-container { background-color: #16191f; border: 1px solid #22252a; padding: 40px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; position: relative; border-radius: 4px; }
         .carousel-slide { display: none; }
         .carousel-slide.active { display: block; animation: fadeIn 0.8s; }
