@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAAVK GROUP 內網核心系統</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", "Microsoft JhengHei", sans-serif; }
+        body { background-color: #0d0f12; color: #d1d5db; min-height: 100vh; overflow-x: hidden; }
+        .hidden { display: none !important; }
+        
+        /* ================= 登入介面樣式 ================= */
+        #loginPage { display: flex; height: 100vh; overflow: hidden; }
+        .left-panel { flex: 1.2; background: linear-gradient(135deg, #15181c 0%, #090a0c 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 2px solid #22252a; }
+        .logo-icon { width: 100px; height: 100px; background-color: #1e3a8a; border: 4px solid #3b82f6; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .logo-text { transform: rotate(-45deg); font-weight: 900; color: #fff; font-size: 20px; }
+        .company-name { margin-top: 25px; font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 4px; }
+        .right-panel { flex: 1; background-color: #111317; padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
+        .rules-box { background-color: #16191f; border-left: 4px solid #3b82f6; padding: 15px; }
+        .rule-item { font-size: 13px; color: #9ca3af; margin-bottom: 6px; list-style: none; }
+        .rule-item::before { content: "• "; color: #3b82f6; }
+        .form-box { background-color: #16191f; padding: 25px; border: 1px solid #22252a; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; padding: 10px; background-color: #0d0f12; border: 1px solid #2b303b; color: #fff; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; }
+        .switch-mode { text-align: center; margin-top: 15px; font-size: 12px; color: #9ca3af; cursor: pointer; text-decoration: underline; }
+
+        /* ================= 主系統導覽列 ================= */
+        nav { background-color: #111317; border-bottom: 2px solid #22252a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-item { color: #9ca3af; cursor: pointer; text-decoration: none; font-size: 15px; font-weight: bold; padding-bottom: 5px; }
+        .nav-item.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
+
+        /* ================= 區域一：輪播首頁 ================= */
+        #home { padding: 40px 10%; position: relative; }
+        .carousel-container { background-color: #16191f; border: 1px solid #22252a; padding: 40px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; position: relative; border-radius: 4px; }
+        .carousel-slide { display: none; }
+        .carousel-slide.active { display: block; animation: fadeIn 0.8s; }
+        .slide-title { font-size: 42px; font-weight: 800; color: #fff; margin-bottom: 15px; }
+        .slide-sub { font-size: 16px; color: #9ca3af; max-width: 600px; line-height: 1.6; }
+        .employee-section { margin-top: 40px; display: flex; gap: 20px; }
+        .emp-card { flex: 1; background-color: #16191f; border: 1px solid #22252a; padding: 20px; text-align: center; border-radius: 4px; }
+
+        /* ================= 區域三：物價表 ================= */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 30px 10%; }
+        .item-card { background-color: #16191f; border: 1px solid #22252a; padding: 20px; border-radius: 4px; text-align: center; }
+        .item-price { color: #eab308; font-weight: bold; font-size: 18px; margin-top: 10px; }
+
+        /* ================= 區域七：法庭 ================= */
+        .court-room { padding: 30px 5%; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .court-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; max-width: 1000px; text-align: center; }
+        .seat { background-color: #1f2937; border: 1px dashed #4b5563; padding: 15px 5px; font-size: 12px; color: #9ca3af; min-height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 4px; }
+        .seat.occupied { background-color: #1e3a8a; border: 1px solid #3b82f6; color: #fff; }
+        .seat.judge-main { background-color: #7f1d1d; border: 1px solid #ef4444; color: #fff; font-weight: bold; }
+        .seat.defendant { background-color: #374151; border: 1px solid #ef4444; color: #f3f4f6; }
+        .verdict-box { width: 100%; max-width: 1000px; background-color: #16191f; border: 1px solid #22252a; padding: 20px; margin-top: 20px; border-radius: 4px; }
+        .verdict-input { width: 100%; height: 80px; background-color: #0d0f12; border: 1px solid #2b303b; color: #fff; padding: 10px; margin-top: 10px; resize: none; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 頁面：登入節目表 ================= -->
+    <div id="loginPage">
+        <div class="left-panel">
+            <div class="logo-icon"><div class="logo-text">HAAVK</div></div>
+            <h1 class="company-name">HAAVK GROUP</h1>
+            <p style="margin-top: 15px; color: #3b82f6; font-size: 13px;" id="loadStatus">• 哈夫克集團網站加載中，請耐心等待...</p>
+        </div>
+        <div class="right-panel">
+            <div class="rules-box">
+                <li class="rule-item">本系統受阿薩薩拉曼德爾防衛智能系統實時監控。</li>
+                <li class="rule-item">依軍事法庭判定，違規者將執行終極除名並記錄次數。</li>
+            </div>
+            <div class="form-box">
+                <h3 id="formTitle" style="margin-bottom: 15px; color:#fff;">安全身分驗證</h3>
+                <form onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <label>電子郵件 / 通行金鑰</label>
+                        <input type="text" id="accInput" required placeholder="請輸入 Email 或特權碼">
+                    </div>
+                    <div class="input-group" id="passContainer">
+                        <label>存取密碼</label>
+                        <input type="password" id="passInput" placeholder="請輸入安全密碼">
+                    </div>
+                    <div id="regContainer" class="hidden">
+                        <div class="input-group"><label>真實姓名</label><input type="text" id="regName"></div>
+                        <div class="input-group"><label>年齡</label><input type="number" id="regAge"></div>
+                        <div class="input-group">
+                            <label>期望職務</label>
+                            <select id="regJob">
+                                <option>安全防衛部</option>
+                                <option>工程技術部</option>
+                                <option>後勤保障部</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-submit" type="submit">確認驗證</button>
+                    <p class="switch-mode" onclick="toggleMode()">申請新員工入職審核</p>
+                </form>
+            </div>
+            <div style="font-size: 11px; color:#4b5563; text-align:center;">HAAVK SYSTEM V2.6 // SECURE MODE</div>
+        </div>
+    </div>
+
+    <!-- ================= 頁面：主系統內網 ================= -->
+    <div id="mainSystem" class="hidden">
+        <nav>
+            <div style="font-weight:900; color:#fff; letter-spacing:2px;">HAAVK INTRA-NET</div>
+            <div class="nav-links">
+                <span class="nav-item active" onclick="switchTab('home')">集團首頁</span>
+                <span class="nav-item" onclick="switchTab('forum')">員工論壇</span>
+                <span class="nav-item" onclick="switchTab('prices')">全物資物價表</span>
+                <span class="nav-item" onclick="switchTab('court')">⚖️ 軍事法庭</span>
+            </div>
+            <div id="userTag" style="color:#3b82f6; font-size:13px; font-weight:bold;"></div>
+        </nav>
+
+        <!-- 區域一：首頁輪播圖 -->
+        <div id="home" class="tab-content">
+            <div>
+                <div class="carousel-container">
+                    <div class="carousel-slide active">
+                        <h2 class="slide-title">力量，服務於人</h2>
+                        <p class="slide-sub">守護大家，為效率發展保駕護航。—— 【安全防衛部 · 威龍】</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <h2 class="slide-title">效率，鑄就未來</h2>
+                        <p class="slide-sub">讓每一項資源歸於效率，讓每一個變量服從未來。—— 【哈夫克集團總裁】</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <h2 class="slide-title">進步，始於認知</h2>
+                        <p class="slide-sub">連接神經，重塑認知，個體之智匯匯成文明之智。—— 【安全防衛部 · 牧神】</p>
+                    </div>
+                </div>
+                <div class="employee-section">
+                    <div class="emp-card"><h4>克萊爾</h4><p style="font-size:12px;color:#9ca3af;margin-top:5px;">絕對執行，沒有私情</p></div>
+                    <div class="emp-card"><h4>莉娜</h4><p style="font-size:12px;color:#9ca3af;margin-top:5px;">私域尖端醫護專家</p></div>
+                    <div class="emp-card"><h4>夜梟</h4><p style="font-size:12px;color:#9ca3af;margin-top:5px;">情報追蹤與特種作戰</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 區域二：論壇 -->
+        <div id="forum" class="tab-content hidden" style="padding: 40px 10%;">
+            <div style="background-color:#16191f; padding:30px; border:1px solid #22252a;">
+                <h3 style="color:#fff; margin-bottom:15px;">哈夫克員工論壇 / 情報交流區</h3>
+
