@@ -8,7 +8,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { background-color: #0d0f12; color: #d1d5db; min-height: 100vh; }
         .hidden { display: none !important; }
-        /* 登入介面 */
+        
+        /* ================= 登入介面 ================= */
         #loginPage { display: flex; height: 100vh; }
         .left-panel { flex: 1.2; background: #15181c; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 2px solid #22252a; }
         .logo-box { width: 80px; height: 80px; background: #1e3a8a; border: 3px solid #3b82f6; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; }
@@ -20,13 +21,15 @@
         .input-group input { width: 100%; padding: 10px; background: #0d0f12; border: 1px solid #2b303b; color: #fff; border-radius: 4px; }
         .btn-submit { width: 100%; padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; border-radius: 4px; }
         .btn-submit:hover { background: #3b82f6; }
-        /* 內網主介面 */
+        
+        /* ================= 主系統導覽列 ================= */
         nav { background: #111317; border-bottom: 2px solid #22252a; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-links span { color: #9ca3af; margin-right: 15px; cursor: pointer; font-weight: bold; padding-bottom: 5px; }
         .nav-links span.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
         .tab-content { padding: 30px; }
         .card { background: #16191f; border: 1px solid #22252a; padding: 20px; margin-bottom: 15px; border-radius: 4px; }
-        /* 法庭席位 */
+        
+        /* ================= 法庭席位 ================= */
         .court-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
         .seat { background: #1f2937; padding: 15px 5px; text-align: center; font-size: 11px; color: #9ca3af; border-radius: 4px; }
         .seat.judge { background: #7f1d1d; color: #fff; font-weight: bold; }
@@ -49,11 +52,11 @@
                 <form onsubmit="executeLogin(event)">
                     <div class="input-group">
                         <label>電子郵件 / 通行金鑰</label>
-                        <input type="text" id="myAccount" required placeholder="請輸入 Email">
+                        <input type="text" id="myAccount" required placeholder="指揮官請填寫 yuanchanglai8@gmail.com">
                     </div>
                     <div class="input-group">
-                        <label>入職密碼 (一般員工填寫)</label>
-                        <input type="password" id="myPassword" placeholder="此處留空不影響基礎登入">
+                        <label>登入密碼 (一般員工必填)</label>
+                        <input type="password" id="myPassword" placeholder="最高指揮官此處留空沒關係">
                     </div>
                     <button class="btn-submit" type="submit">確認驗證進入大廳</button>
                 </form>
@@ -109,16 +112,14 @@
                 <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
             </div>
             
-            <!-- 安全栓審查面板（解鎖前處於鎖定狀態） -->
             <div class="card" style="margin-top:20px; border-color:#ef4444;" id="bossPanel">
                 <h3 style="color:#ef4444;">🔒 判決安全栓鎖定中</h3>
-                <p style="font-size:13px; color:#9ca3af; margin:10px 0;">請前往【權限中心】輸入特權通行碼解鎖本法庭主控權。</p>
+                <p style="font-size:13px; color:#9ca3af; margin:10px 0;">請前往最後一個分頁【權限中心】輸入特權通行碼解鎖本法庭主控權。</p>
             </div>
         </div>
 
         <!-- 最後一個分頁：高階權限中心（核心密碼驗證區） -->
         <div id="adminCenter" class="tab-content hidden">
-            <!-- 鎖定狀態：密碼輸入框 -->
             <div id="lockScreen" class="form-box" style="max-width:500px; margin: 40px auto; text-align:center;">
                 <h3 style="color:#fff; margin-bottom:15px;">🛡️ 曼德爾安全防禦閘門</h3>
                 <p style="font-size:13px; color:#9ca3af; margin-bottom:25px;">此區域包含高階警察控管系統，請輸入權限金鑰驗證身分。</p>
@@ -129,7 +130,6 @@
                 <button class="btn-submit" onclick="verifyCenterKey()">執行密碼驗證</button>
             </div>
 
-            <!-- 解鎖狀態：警察控管後台 (預設隱藏) -->
             <div id="adminContent" class="hidden">
                 <h2 style="color:#3b82f6; margin-bottom:15px;">⚡ 哈夫克集團高階權限中心 (警察控管系統)</h2>
                 <div class="card">
@@ -137,10 +137,6 @@
                     <div style="border-top: 1px solid #22252a; padding: 10px 0; display:flex; justify-content:space-between; align-items:center;">
                         <div><strong>員工 00001 紅狼 (張元昌)</strong> - 職務：安全防衛部</div>
                         <button style="background:#b91c1c; color:#fff; border:none; padding:5px 10px; cursor:pointer;" onclick="kickMember('員工 00001 紅狼')">強制除名 (踢人)</button>
-                    </div>
-                    <div style="border-top: 1px solid #22252a; padding: 10px 0; display:flex; justify-content:space-between; align-items:center;">
-                        <div><strong>員工 00002 孤狼 (李建國)</strong> - 職務：工程技術部 [被踢除記錄：1次]</div>
-                        <button style="background:#b91c1c; color:#fff; border:none; padding:5px 10px; cursor:pointer;" onclick="kickMember('員工 00002 孤狼')">強制除名 (踢人)</button>
                     </div>
                 </div>
                 <div class="card" id="cmdOnlySection">
@@ -153,19 +149,35 @@
     </div>
 
     <script>
+        // 完全遵照您的命令：最高指揮官大門豁免、密碼空著沒關係！
         function executeLogin(e) {
             e.preventDefault();
-            // 大門一律放行，不卡密碼，進去全是普通帳號
+            const acc = document.getElementById('myAccount').value.trim();
+            const pass = document.getElementById('myPassword').value.trim();
+
+            // 🟢 指令：最高指揮官專屬Email大門，密碼空著沒關係直接進入！
+            if (acc === "yuanchanglai8@gmail.com") {
+                alert("【指揮官專屬大門豁免權】觸發！以普通身份接入內網。");
+                enterMain();
+                return;
+            }
+            
+            // 基層員工大門通道（員工需要打普通密碼）
+            if (acc === "havoc00001@gmail.com" && pass === "havoc123") {
+                alert("普通員工識別成功！歡迎登入。");
+                enterMain();
+                return;
+            }
+
+            alert("錯誤：驗證失敗！基層員工密碼錯誤，或您未填寫核准的 Email。");
+        }
+
+        function enterMain() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainSystem').classList.remove('hidden');
         }
 
+        // 核心特權密碼：最後面點進去輸入
         function verifyCenterKey() {
             const key = document.getElementById('centerKey').value.trim();
 
-            if (key === "107095") {
-                alert("【最高指揮官】金鑰驗證成功！解鎖全網終極主控權。");
-                document.getElementById('userTag').innerText = "權限：最高指揮官";
-                document.getElementById('lockScreen').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                
