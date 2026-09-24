@@ -14,21 +14,23 @@
         .logo-box { width: 80px; height: 80px; background: #1e3a8a; border: 3px solid #3b82f6; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; }
         .logo-text { transform: rotate(-45deg); font-weight: bold; color: #fff; }
         .right-panel { flex: 1; background: #111317; padding: 30px; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
-        .form-box { background: #16191f; padding: 20px; border: 1px solid #22252a; }
+        .form-box { background: #16191f; padding: 20px; border: 1px solid #22252a; border-radius: 4px; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 5px; }
-        .input-group input { width: 100%; padding: 10px; background: #0d0f12; border: 1px solid #2b303b; color: #fff; }
-        .btn-submit { width: 100%; padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; }
+        .input-group input { width: 100%; padding: 10px; background: #0d0f12; border: 1px solid #2b303b; color: #fff; border-radius: 4px; }
+        .btn-submit { width: 100%; padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-submit:hover { background: #3b82f6; }
         /* 內網主介面 */
-        nav { background: #111317; border-bottom: 2px solid #22252a; padding: 15px; display: flex; justify-content: space-between; }
-        .nav-links span { color: #9ca3af; margin-right: 15px; cursor: pointer; font-weight: bold; }
-        .nav-links span.active { color: #3b82f6; }
+        nav { background: #111317; border-bottom: 2px solid #22252a; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .nav-links span { color: #9ca3af; margin-right: 15px; cursor: pointer; font-weight: bold; padding-bottom: 5px; }
+        .nav-links span.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
         .tab-content { padding: 30px; }
-        .card { background: #16191f; border: 1px solid #22252a; padding: 20px; margin-bottom: 15px; }
+        .card { background: #16191f; border: 1px solid #22252a; padding: 20px; margin-bottom: 15px; border-radius: 4px; }
         /* 法庭席位 */
         .court-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
         .seat { background: #1f2937; padding: 15px 5px; text-align: center; font-size: 11px; color: #9ca3af; border-radius: 4px; }
         .seat.judge { background: #7f1d1d; color: #fff; font-weight: bold; }
+        .seat.commander { background: #1e3a8a; color: #fff; font-weight: bold; border: 2px solid #3b82f6; }
         .seat.defendant { background: #374151; border: 1px solid #ef4444; color: #fff; }
     </style>
 </head>
@@ -50,25 +52,26 @@
                         <input type="text" id="myAccount" required placeholder="請輸入 Email">
                     </div>
                     <div class="input-group">
-                        <label>存取密碼 (一般員工填寫)</label>
-                        <input type="password" id="myPassword" placeholder="指揮官請留空">
+                        <label>入職密碼 (一般員工填寫)</label>
+                        <input type="password" id="myPassword" placeholder="此處留空不影響基礎登入">
                     </div>
-                    <button class="btn-submit" type="submit">確認驗證進入</button>
+                    <button class="btn-submit" type="submit">確認驗證進入大廳</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- ================= 2. 主系統內網 (預設隱藏) ================= -->
+    <!-- ================= 2. 主系統內網 ================= -->
     <div id="mainSystem" class="hidden">
         <nav>
             <div style="font-weight:bold; color:#fff;">HAAVK 核心系統大廳</div>
-            <div class="nav-links">
-                <span onclick="switchTab('home')" id="btn-home" class="active">首頁輪播</span>
-                <span onclick="switchTab('prices')">物品物價</span>
-                <span onclick="switchTab('court')">⚖️ 軍事法庭</span>
+            <div class="nav-links" id="navBar">
+                <span onclick="switchTab('home')" class="nav-item active">首頁輪播</span>
+                <span onclick="switchTab('prices')" class="nav-item">物品物價</span>
+                <span onclick="switchTab('court')" class="nav-item">⚖️ 軍事法庭</span>
+                <span onclick="switchTab('adminCenter')" class="nav-item">🛡️ 權限中心</span>
             </div>
-            <div id="userTag" style="color:#3b82f6; font-weight:bold; font-size:13px;"></div>
+            <div id="userTag" style="color:#3b82f6; font-weight:bold; font-size:13px;">權限：普通員工</div>
         </nav>
 
         <!-- 首頁分頁 -->
@@ -97,7 +100,7 @@
                 <div class="seat">陪審法官 1</div>
                 <div class="seat">陪審法官 2</div>
                 <div class="seat judge">大法官 (主審)</div>
-                <div class="seat judge" style="background:#1e3a8a;">最高指揮官 (您)</div>
+                <div class="seat" id="cmdSeat">未就位 (權限鎖定)</div>
                 <div class="seat">陪審法官 4</div>
             </div>
             <h4 style="color:#fff; margin-top:20px;">被告席 (5席)</h4>
@@ -105,11 +108,46 @@
                 <div class="seat defendant">被告員工 00042</div>
                 <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
             </div>
-            <div class="card" style="margin-top:20px;" id="bossPanel">
-                <h3 style="color:#fff;">⚖️ 大法官判決審查 (安全栓機制)</h3>
-                <p style="font-size:13px; color:#9ca3af; margin:10px 0;">目前擬定判決：【將被告員工 00042 強制除名】</p>
-                <button class="btn-submit" style="background:#10b981; border-color:#10b981; width:auto; margin-right:10px;" onclick="alert('判決已核准！哈夫克全網公告發布，懲處生效。')">🔴 核准並發布</button>
-                <button class="btn-submit" style="background:#b91c1c; border-color:#ef4444; width:auto;" onclick="alert('判決已被最高指揮官一票駁回！')">❌ 一票駁回</button>
+            
+            <!-- 安全栓審查面板（解鎖前處於鎖定狀態） -->
+            <div class="card" style="margin-top:20px; border-color:#ef4444;" id="bossPanel">
+                <h3 style="color:#ef4444;">🔒 判決安全栓鎖定中</h3>
+                <p style="font-size:13px; color:#9ca3af; margin:10px 0;">請前往【權限中心】輸入特權通行碼解鎖本法庭主控權。</p>
+            </div>
+        </div>
+
+        <!-- 最後一個分頁：高階權限中心（核心密碼驗證區） -->
+        <div id="adminCenter" class="tab-content hidden">
+            <!-- 鎖定狀態：密碼輸入框 -->
+            <div id="lockScreen" class="form-box" style="max-width:500px; margin: 40px auto; text-align:center;">
+                <h3 style="color:#fff; margin-bottom:15px;">🛡️ 曼德爾安全防禦閘門</h3>
+                <p style="font-size:13px; color:#9ca3af; margin-bottom:25px;">此區域包含高階警察控管系統，請輸入權限金鑰驗證身分。</p>
+                <div class="input-group" style="text-align:left;">
+                    <label>請輸入權限金鑰 (密碼)</label>
+                    <input type="password" id="centerKey" placeholder="請輸入 107095 或 123450">
+                </div>
+                <button class="btn-submit" onclick="verifyCenterKey()">執行密碼驗證</button>
+            </div>
+
+            <!-- 解鎖狀態：警察控管後台 (預設隱藏) -->
+            <div id="adminContent" class="hidden">
+                <h2 style="color:#3b82f6; margin-bottom:15px;">⚡ 哈夫克集團高階權限中心 (警察控管系統)</h2>
+                <div class="card">
+                    <h3 style="color:#fff; margin-bottom:10px;">集團成員名單與生殺大權</h3>
+                    <div style="border-top: 1px solid #22252a; padding: 10px 0; display:flex; justify-content:space-between; align-items:center;">
+                        <div><strong>員工 00001 紅狼 (張元昌)</strong> - 職務：安全防衛部</div>
+                        <button style="background:#b91c1c; color:#fff; border:none; padding:5px 10px; cursor:pointer;" onclick="kickMember('員工 00001 紅狼')">強制除名 (踢人)</button>
+                    </div>
+                    <div style="border-top: 1px solid #22252a; padding: 10px 0; display:flex; justify-content:space-between; align-items:center;">
+                        <div><strong>員工 00002 孤狼 (李建國)</strong> - 職務：工程技術部 [被踢除記錄：1次]</div>
+                        <button style="background:#b91c1c; color:#fff; border:none; padding:5px 10px; cursor:pointer;" onclick="kickMember('員工 00002 孤狼')">強制除名 (踢人)</button>
+                    </div>
+                </div>
+                <div class="card" id="cmdOnlySection">
+                    <h3 style="color:#ef4444; margin-bottom:10px;">👑 最高指揮官獨佔核心 (107095 專屬)</h3>
+                    <p style="font-size:13px; color:#9ca3af; margin-bottom:10px;">此區域連一般權限人（123450）都無法查閱。</p>
+                    <button class="btn-submit" style="background:#7c3aed; border-color:#8b5cf6; width:auto;" onclick="alert('利益迴避與全網權限凍結程序已就緒。')">激活最高豁免程序</button>
+                </div>
             </div>
         </div>
     </div>
@@ -117,36 +155,17 @@
     <script>
         function executeLogin(e) {
             e.preventDefault();
-            const acc = document.getElementById('myAccount').value.trim();
-            const pass = document.getElementById('myPassword').value.trim();
+            // 大門一律放行，不卡密碼，進去全是普通帳號
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainSystem').classList.remove('hidden');
+        }
 
-            // 1. 最高指揮官登入邏輯 (Email免密 或 密碼107095)
-            if (acc === "yuanchanglai8@gmail.com" || pass === "107095") {
-                alert("【最高指揮官】身份識別成功！歡迎接入哈夫克系統大廳。");
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainSystem').classList.remove('hidden');
+        function verifyCenterKey() {
+            const key = document.getElementById('centerKey').value.trim();
+
+            if (key === "107095") {
+                alert("【最高指揮官】金鑰驗證成功！解鎖全網終極主控權。");
                 document.getElementById('userTag').innerText = "權限：最高指揮官";
-                return;
-            }
-
-            // 2. 權限人登入
-            if (pass === "123450") {
-                alert("【高階權限人】識別成功！進入系統。");
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainSystem').classList.remove('hidden');
-                document.getElementById('userTag').innerText = "權限：管理員";
-                document.getElementById('bossPanel').innerHTML = "<h4 style='color:#ef4444;'>🔒 判決安全栓鎖定中，等待最高指揮官簽准...</h4>";
-                return;
-            }
-
-            alert("驗證失敗：該帳號尚未獲准，或通行金鑰錯誤。");
-        }
-
-        function switchTab(tabId) {
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(c => c.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-        }
-    </script>
-</body>
-</html>
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                
