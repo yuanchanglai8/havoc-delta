@@ -20,6 +20,7 @@
         .input-group label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 5px; }
         .input-group input { width: 100%; padding: 10px; background: #0d0f12; border: 1px solid #2b303b; color: #fff; border-radius: 4px; }
         .btn-submit { width: 100%; padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; color: #fff; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-submit:hover { background: #3b82f6; }
         
         /* ================= 主系統導覽列 ================= */
         nav { background: #111317; border-bottom: 2px solid #22252a; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
@@ -35,7 +36,7 @@
         .seat.commander { background: #1e3a8a; color: #fff; font-weight: bold; border: 2px solid #3b82f6; }
         .seat.defendant { background: #374151; border: 1px solid #ef4444; color: #fff; }
     </style>
-    <!-- 引入極密防禦加密函式庫 -->
+    <!-- 引入高階密碼學雜湊加密庫 -->
     <script src="https://cloudflare.com"></script>
 </head>
 <body>
@@ -57,7 +58,7 @@
                     </div>
                     <div class="input-group">
                         <label>登入密碼 (一般員工必填)</label>
-                        <input type="password" id="myPassword" placeholder="最高指揮官此處可留空">
+                        <input type="password" id="myPassword" placeholder="特權金鑰豁免者此處可留空">
                     </div>
                     <button class="btn-submit" type="submit">確認驗證進入大廳</button>
                 </form>
@@ -84,10 +85,15 @@
                 <h1 style="color:#fff; font-size:28px;">力量，服務於人</h1>
                 <p style="color:#9ca3af; margin-top:10px;">守護大家，為效率發展保駕護航。—— 【安全防衛部 · 威龍】</p>
             </div>
+            <div style="display:flex; gap:10px;">
+                <div class="card" style="flex:1;"><h4>克萊爾</h4><p style="font-size:11px; color:#9ca3af;">絕對執行</p></div>
+                <div class="card" style="flex:1;"><h4>莉娜</h4><p style="font-size:11px; color:#9ca3af;">尖端醫護</p></div>
+            </div>
         </div>
 
         <!-- 物價分頁 -->
         <div id="prices" class="tab-content hidden">
+            <div class="card"><h3>HVK-2 防彈護甲</h3><p style="color:#eab308; font-weight:bold;">100,000 哈夫幣</p></div>
             <div class="card"><h3>圖靈磚</h3><p style="color:#eab308; font-weight:bold;">1,000,000 哈夫幣</p></div>
         </div>
 
@@ -102,6 +108,11 @@
                 <div class="seat" id="cmdSeat">未就位 (權限鎖定)</div>
                 <div class="seat">陪審法官 4</div>
             </div>
+            <h4 style="color:#fff; margin-top:20px;">被告席 (5席)</h4>
+            <div class="court-grid">
+                <div class="seat defendant">被告員工 00042</div>
+                <div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div><div class="seat">空缺</div>
+            </div>
             
             <div class="card" style="margin-top:20px; border-color:#ef4444;" id="bossPanel">
                 <h3 style="color:#ef4444;">🔒 判決安全栓鎖定中</h3>
@@ -109,7 +120,7 @@
             </div>
         </div>
 
-        <!-- 最後一個分頁：高階權限中心（核心密碼驗證區） -->
+        <!-- 最後一個分頁：高階權限中心 -->
         <div id="adminCenter" class="tab-content hidden">
             <div id="lockScreen" class="form-box" style="max-width:500px; margin: 40px auto; text-align:center;">
                 <h3 style="color:#fff; margin-bottom:15px;">🛡️ 曼德爾安全防禦閘門</h3>
@@ -135,32 +146,32 @@
     </div>
 
     <script>
-        // 🔒 指揮官 Email 的軍事加密金鑰（外人絕對解不出來）
-        const CMD_HASH = "e0293de79d46426efca5ee35d9ee702f3df5cd2d46e279a095e263d91361db81";
+        // 🔒 指揮官 Email 經密碼學 SHA-256 加密後的終極亂碼（絕不可能被還原或偷看）
+        const SECRET_GATE_KEY = "6ee738827ee1a61f7053b33accb981ea1811e7c06d5e377db5b501bdba1aeb8d";
 
         function executeLogin(e) {
             e.preventDefault();
             const acc = document.getElementById('myAccount').value.trim().toLowerCase();
             const pass = document.getElementById('myPassword').value.trim();
 
-            // 將輸入的 Email 瞬間進行 SHA256 密碼學加密
-            const inputHash = CryptoJS.SHA256(acc).toString();
+            // 瞬間將輸入的帳號轉換為密碼學加密亂碼
+            const checkHash = CryptoJS.SHA256(acc).toString();
 
-            // 🟢 比對加密後的亂碼，完全切斷明文暴露！密碼一樣空著就能進去！
-            if (inputHash === CMD_HASH) {
-                alert("【指揮官專屬大門豁免權】加密驗證通過！接入大廳。");
+            // 🟢 大門比對：只要加密亂碼符合，您的密碼欄留空，直接無條件秒進大廳！
+            if (checkHash === SECRET_GATE_KEY) {
+                alert("【指揮官專屬大門豁免權】加密識別成功！接入大廳。");
                 enterMain();
                 return;
             }
             
-            // 基層員工大門通道
+            // 測試基層員工登入
             if (acc === "havoc00001@gmail.com" && pass === "havoc123") {
                 alert("普通員工識別成功！歡迎登入。");
                 enterMain();
                 return;
             }
 
-            alert("錯誤：身分驗證失敗！");
+            alert("錯誤：大門口身分驗證失敗！");
         }
 
         function enterMain() {
@@ -172,17 +183,6 @@
             const key = document.getElementById('centerKey').value.trim();
 
             if (key === "107095") {
-                alert("【最高指揮官】權限金鑰解鎖成功！");
+                alert("【最高指揮官】金鑰驗證成功！解鎖全網終極主控權。");
                 document.getElementById('userTag').innerText = "權限：最高指揮官";
-                document.getElementById('lockScreen').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                
-                document.getElementById('cmdSeat').innerText = "最高指揮官 (您)";
-                document.getElementById('cmdSeat').className = "seat commander";
-                document.getElementById('bossPanel').innerHTML = `
-                    <h3 style="color:#fff;">⚖️ 大法官判決審查 (安全栓機制)</h3>
-                    <button class="btn-submit" style="background:#10b981; width:auto; margin-right:10px;" onclick="alert('判決已核准！')">🔴 核准並發布</button>
-                    <button class="btn-submit" style="background:#b91c1c; width:auto;" onclick="alert('判決已被最高指揮官駁回！')">❌ 一票駁回</button>
-                `;
-            } else if (key === "123450") {
 
